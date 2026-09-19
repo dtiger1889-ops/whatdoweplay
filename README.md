@@ -2,6 +2,10 @@
 
 A Steam companion for the two questions that actually come up: **"would I play this?"** (during a sale, for a free claim, for a gift) and **"what do we play tonight?"** (when three friends are on Discord and nobody wants to pick). Both answered from real playtime and real ownership, not from review scores.
 
+![Ready Check: the friends-night picker, showing who is on, how much time you have, and the top game everyone present owns](assets/ready-check.png)
+
+*Ready Check, rendered from sample data -- the people and libraries shown are invented.*
+
 Formerly `game-sale-scout`; the old URL redirects.
 
 ## What is in the box
