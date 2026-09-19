@@ -60,6 +60,10 @@ Everything generated under `friends/` describes real people's libraries and hour
 
 The Web API key is used at run time and never written anywhere; revoke it at https://steamcommunity.com/dev/apikey if you do not need it again.
 
+## Companion pieces
+
+Once the picker settles what to play, [Hintforge](https://github.com/hintforge/builder) is the spoiler-controlled companion for actually playing it — a guide framework that tracks your progress and answers in-game questions on your terms, without spoiling what's ahead.
+
 ## License
 
 MIT. See [LICENSE](LICENSE).
