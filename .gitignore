@@ -1,2 +1,12 @@
 owned_games.json
 playtime_ranked.md
+
+# friends-night picker: every generated file describes real people's libraries
+friends/roster.json
+friends/clippings/
+friends/friends_games.json
+friends/shared_set.json
+friends/shared_details.*
+friends/shared_multiplayer.csv
+friends/feel_tags.csv
+friends/ready-check.html
