@@ -28,7 +28,7 @@ upcoming promotions, and the first element is often not a free game. For each el
   `title`; the giveaway ends at `promotions.promotionalOffers[0].promotionalOffers[0].endDate`;
   the store slug is `productSlug` (fall back to `catalogNs.mappings[0].pageSlug`, then `urlSlug`).
 - **Upcoming** = `promotions.upcomingPromotionalOffers` is non-empty; it starts at
-  `upcomingPromotionalOffers[0].promotionalOffers[0].startDate`.
+  `promotions.upcomingPromotionalOffers[0].promotionalOffers[0].startDate`.
 
 Dedupe by title/slug (Epic sometimes lists a base game and an edition), handle any count
 (two is normal), and run every distinct free-right-now title through Steps 2–4. List
