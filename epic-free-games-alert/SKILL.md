@@ -11,36 +11,31 @@ If the profile is still a placeholder, report the games without personal verdict
 point to [taste-profile/SKILL.md](../taste-profile/SKILL.md). If Telegram is not configured
 or authorized, return the summary in the session. This skill does not create a schedule.
 
-## Step 1 — Get free game titles from Epic
+## Step 1 — Get every currently free title from Epic
 
-**Before any Chrome step — Chrome-ready procedure.** Unattended run, the user is not available to open Chrome for you.
+One keyless request, no browser: opening a browser to read the store page costs memory, and
+from an unattended background session it can leave an invisible browser holding the user's
+profile.
 
-A. Load Chrome MCP tools if missing: `ToolSearch { query: "chrome", max_results: 25 }`.
-B. Probe with `mcp__Claude_in_Chrome__tabs_context_mcp`. If it succeeds, proceed.
-B.5. **If the connection probe fails, try opening Chrome once** using available computer-use tools, without restarting it or closing existing tabs:
-   1. `mcp__computer-use__open_application` "Google Chrome".
-   2. `mcp__computer-use__wait` 8s.
-   3. Re-probe `mcp__Claude_in_Chrome__list_connected_browsers`. If non-empty → proceed to Step 1 of the real work.
-   4. Else re-probe `mcp__Claude_in_Chrome__tabs_context_mcp` with `createIfEmpty: true`, wait 3s.
-   5. If both probes still fail → proceed to C.
-C. **If B.5 did not recover**, inspect one screenshot when available. If it shows a locked desktop, use the web-search fallback. Do not attempt to unlock it.
-D. If computer-use access is available without a pending user prompt, try the following
-recovery sequence up to three times (waits 8s, 12s, 20s). If access requires approval
-during an unattended run, skip recovery and use web search:
-   1. `mcp__Claude_in_Chrome__tabs_context_mcp` with `createIfEmpty: true` → wait 3s → probe.
-   2. `mcp__Claude_in_Chrome__navigate` to `about:blank` → wait 3s → probe.
-   3. `mcp__Claude_in_Chrome__tabs_create_mcp` to `about:blank` → probe.
-   4. Another `mcp__computer-use__open_application` Chrome cycle → wait → probe.
-E. If recovery fails or the necessary tools are unavailable, use the WebSearch path below. Report only a failure that prevents retrieval, not each failed browser probe.
+```bash
+curl -s --max-time 20 'https://store-site-backend-static.ak.epicgames.com/freeGamesPromotions?locale=en-US&country=US&allowCountries=US'
+```
 
-Use the Chrome MCP:
-- Get a tab via mcp__Claude_in_Chrome__tabs_context_mcp (createIfEmpty: true)
-- Navigate to https://store.epicgames.com/en-US/free-games and wait 4 seconds
-- Use javascript_tool to extract: game title(s), claim deadline, Epic store slug/URL, and any description text visible on the page
+Walk the whole array at `data.Catalog.searchStore.elements[]`; it holds current AND
+upcoming promotions, and the first element is often not a free game. For each element:
+- **Free right now** = `promotions.promotionalOffers` is non-empty, its window is active
+  (`startDate` ≤ now < `endDate`), and `price.totalPrice.discountPrice == 0`. Title is
+  `title`; the giveaway ends at `promotions.promotionalOffers[0].promotionalOffers[0].endDate`;
+  the store slug is `productSlug` (fall back to `catalogNs.mappings[0].pageSlug`, then `urlSlug`).
+- **Upcoming** = `promotions.upcomingPromotionalOffers` is non-empty; it starts at
+  `upcomingPromotionalOffers[0].promotionalOffers[0].startDate`.
 
-If Chrome MCP is unavailable, search for the current titles and verify them against
-Epic's official store. Confirm claim deadlines and distinguish giveaways from permanently
-free-to-play games. If a title or deadline cannot be verified, label it unconfirmed.
+Dedupe by title/slug (Epic sometimes lists a base game and an edition), handle any count
+(two is normal), and run every distinct free-right-now title through Steps 2–4. List
+upcoming titles in one heads-up line at the end, without enrichment.
+
+If the request fails or finds no free-right-now title, report that once with the link
+https://store.epicgames.com/en-US/free-games and stop.
 
 ## Step 2 — Enrich each game with Metacritic data
 
